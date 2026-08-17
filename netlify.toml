@@ -1,0 +1,43 @@
+# Netlify Build Configuration for Brothers Biriyani Website
+
+[build]
+  # Build command to execute
+  command = "npm run build"
+  
+  # Directory to publish (Vite outputs to dist/)
+  publish = "dist"
+
+# SPA routing configuration
+# Redirects all routes to index.html with 200 status to support client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Optional: Headers for security and performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Cache static assets
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    # Don't cache index.html
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
