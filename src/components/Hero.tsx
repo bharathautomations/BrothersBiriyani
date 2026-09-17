@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion';
-import { ChevronDown, Sparkles } from 'lucide-react';
+import { ChevronDown, Sparkles, CalendarCheck } from 'lucide-react';
+import { useBookingModal } from '../hooks/useBookingModal';
 
 const Hero = () => {
+  const { openBookingModal } = useBookingModal();
+
   return (
     <section
       id="home"
@@ -134,6 +137,14 @@ const Hero = () => {
               <a href="#menu" className="btn-secondary text-sm xs:text-base md:text-lg xl:text-xl px-6 xs:px-8 md:px-10 xl:px-12 py-2.5 xs:py-3 md:py-4 xl:py-5 w-full sm:w-auto inline-block text-center" aria-label="View our food menu">
                 Explore Our Menu
               </a>
+              <button
+                onClick={openBookingModal}
+                className="btn-secondary text-sm xs:text-base md:text-lg xl:text-xl px-6 xs:px-8 md:px-10 xl:px-12 py-2.5 xs:py-3 md:py-4 xl:py-5 w-full sm:w-auto flex items-center justify-center gap-2"
+                aria-label="Book a table"
+              >
+                <CalendarCheck size={20} />
+                Book a Table
+              </button>
             </motion.div>
           </motion.div>
 

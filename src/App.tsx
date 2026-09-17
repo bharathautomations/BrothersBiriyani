@@ -10,29 +10,34 @@ import Testimonials from './components/Testimonials';
 import CTASection from './components/CTASection';
 import FinalCTA from './components/FinalCTA';
 import Footer from './components/Footer';
+import BookingModal from './components/BookingModal';
+import { BookingModalProvider } from './context/BookingModalProvider';
 
 function App() {
   return (
-    <div className="min-h-screen bg-brand-charcoal-dark">
-      {/* Skip to main content link for keyboard navigation */}
-      <a href="#main-content" className="skip-to-content">
-        Skip to main content
-      </a>
-      <Navbar />
-      <main id="main-content">
-        <Hero />
-        <BrandHighlights />
-        <MenuSection />
-        <SpecialOfferBanner />
-        <AboutSection />
-        <WhyChooseUs />
-        <Gallery />
-        <Testimonials />
-        <CTASection />
-        <FinalCTA />
-      </main>
-      <Footer />
-    </div>
+    <BookingModalProvider>
+      <div className="min-h-screen bg-brand-charcoal-dark">
+        {/* Skip to main content link for keyboard navigation */}
+        <a href="#main-content" className="skip-to-content">
+          Skip to main content
+        </a>
+        <Navbar />
+        <main id="main-content">
+          <Hero />
+          <BrandHighlights />
+          <MenuSection />
+          <SpecialOfferBanner />
+          <AboutSection />
+          <WhyChooseUs />
+          <Gallery />
+          <Testimonials />
+          <CTASection />
+          <FinalCTA />
+        </main>
+        <Footer />
+        <BookingModal />
+      </div>
+    </BookingModalProvider>
   );
 }
 

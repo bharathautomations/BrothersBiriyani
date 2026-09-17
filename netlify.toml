@@ -7,6 +7,19 @@
   # Directory to publish (Vite outputs to dist/)
   publish = "dist"
 
+# Netlify Functions (backend for the table booking feature)
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# API routing configuration
+# Maps friendly /api/* paths to the deployed Netlify Functions.
+# Must be listed before the SPA catch-all redirect below.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
 # SPA routing configuration
 # Redirects all routes to index.html with 200 status to support client-side routing
 [[redirects]]

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, CalendarCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useBookingModal } from '../hooks/useBookingModal';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { openBookingModal } = useBookingModal();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -79,7 +81,19 @@ const Navbar = () => {
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brand-gold transition-all duration-300 group-hover:w-full"></span>
               </motion.a>
             ))}
-            
+
+            {/* Book a Table CTA */}
+            <motion.button
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              onClick={openBookingModal}
+              className="btn-secondary text-sm py-2.5 px-6 flex items-center gap-2"
+              aria-label="Book a table"
+            >
+              <CalendarCheck size={16} />
+              Book a Table
+            </motion.button>
+
             {/* Primary CTA */}
             <motion.button
               initial={{ opacity: 0, x: 20 }}
@@ -121,6 +135,17 @@ const Navbar = () => {
             role="menu"
           >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-1">
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  openBookingModal();
+                }}
+                className="btn-secondary w-full flex items-center justify-center gap-2 py-3 mb-3"
+                aria-label="Book a table"
+              >
+                <CalendarCheck size={18} />
+                Book a Table
+              </button>
               {navLinks.map((link, index) => (
                 <motion.a
                   key={link.name}

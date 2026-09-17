@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Environment variables / secrets (never commit database credentials)
+.env
+.env.local
+.env.*.local
+.netlify
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
