@@ -93,7 +93,12 @@ export const handler: Handler = async (event: HandlerEvent) => {
     // or network retry) returns the original booking instead of creating a duplicate row.
     if (idempotencyKey) {
       const existing = (await sql`
-        SELECT * FROM bookings WHERE idempotency_key = ${idempotencyKey} LIMIT 1
+        SELECT
+          id, booking_reference, customer_name, customer_phone, customer_email,
+          TO_CHAR(booking_date, 'YYYY-MM-DD') AS booking_date,
+          TO_CHAR(booking_time, 'HH24:MI') AS booking_time,
+          number_of_guests, special_request, status, idempotency_key, created_at, updated_at
+        FROM bookings WHERE idempotency_key = ${idempotencyKey} LIMIT 1
       `) as BookingRow[];
       if (existing.length > 0) {
         return jsonResponse(200, { success: true, booking: toBookingResponse(existing[0]) });
@@ -121,7 +126,11 @@ export const handler: Handler = async (event: HandlerEvent) => {
         'PENDING', ${idempotencyKey}
       )
       ON CONFLICT (idempotency_key) DO NOTHING
-      RETURNING *
+      RETURNING
+        id, booking_reference, customer_name, customer_phone, customer_email,
+        TO_CHAR(booking_date, 'YYYY-MM-DD') AS booking_date,
+        TO_CHAR(booking_time, 'HH24:MI') AS booking_time,
+        number_of_guests, special_request, status, idempotency_key, created_at, updated_at
     `) as BookingRow[];
 
     if (inserted.length > 0) {
@@ -131,7 +140,12 @@ export const handler: Handler = async (event: HandlerEvent) => {
     // A concurrent request with the same idempotency key won the race - return that row.
     if (idempotencyKey) {
       const existing = (await sql`
-        SELECT * FROM bookings WHERE idempotency_key = ${idempotencyKey} LIMIT 1
+        SELECT
+          id, booking_reference, customer_name, customer_phone, customer_email,
+          TO_CHAR(booking_date, 'YYYY-MM-DD') AS booking_date,
+          TO_CHAR(booking_time, 'HH24:MI') AS booking_time,
+          number_of_guests, special_request, status, idempotency_key, created_at, updated_at
+        FROM bookings WHERE idempotency_key = ${idempotencyKey} LIMIT 1
       `) as BookingRow[];
       if (existing.length > 0) {
         return jsonResponse(200, { success: true, booking: toBookingResponse(existing[0]) });

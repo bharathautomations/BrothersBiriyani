@@ -37,6 +37,15 @@ const initialFormState: FormState = {
 
 const todayIso = () => new Date().toISOString().split('T')[0];
 
+/** Some desktop browsers only open the native picker when clicking the small icon - force it open on any click. */
+function openNativePicker(event: { currentTarget: HTMLInputElement }) {
+  try {
+    event.currentTarget.showPicker?.();
+  } catch {
+    // showPicker can throw in browsers that don't support it for this input type - ignore.
+  }
+}
+
 const BookingModal = () => {
   const { isOpen, closeBookingModal } = useBookingModal();
   const [form, setForm] = useState<FormState>(initialFormState);
@@ -312,6 +321,8 @@ const BookingModal = () => {
                         min={minDate}
                         value={form.bookingDate}
                         onChange={(e) => updateField('bookingDate', e.target.value)}
+                        onClick={openNativePicker}
+                        onFocus={openNativePicker}
                         className="w-full bg-brand-charcoal-dark border border-brand-gold/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold [color-scheme:dark]"
                         required
                       />
@@ -332,6 +343,8 @@ const BookingModal = () => {
                         type="time"
                         value={form.bookingTime}
                         onChange={(e) => updateField('bookingTime', e.target.value)}
+                        onClick={openNativePicker}
+                        onFocus={openNativePicker}
                         className="w-full bg-brand-charcoal-dark border border-brand-gold/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold [color-scheme:dark]"
                         required
                       />

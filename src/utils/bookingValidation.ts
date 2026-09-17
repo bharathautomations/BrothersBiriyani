@@ -26,13 +26,15 @@ export function isTodayOrFutureDate(value: string): boolean {
 }
 
 export function formatDisplayDate(isoDate: string): string {
-  const [year, month, day] = isoDate.split('-').map(Number);
+  const datePart = isoDate.split('T')[0];
+  const [year, month, day] = datePart.split('-').map(Number);
   const date = new Date(year, (month ?? 1) - 1, day ?? 1);
   return date.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 export function formatDisplayTime(time: string): string {
-  const [hoursStr, minutesStr] = time.split(':');
+  const timePart = time.split('T').pop() ?? time;
+  const [hoursStr, minutesStr] = timePart.split(':');
   const hours = Number(hoursStr);
   const minutes = Number(minutesStr ?? '0');
   const period = hours >= 12 ? 'PM' : 'AM';

@@ -37,7 +37,12 @@ export const handler: Handler = async (event: HandlerEvent) => {
 
   try {
     const rows = (await sql`
-      SELECT * FROM bookings WHERE booking_reference = ${reference} LIMIT 1
+      SELECT
+        id, booking_reference, customer_name, customer_phone, customer_email,
+        TO_CHAR(booking_date, 'YYYY-MM-DD') AS booking_date,
+        TO_CHAR(booking_time, 'HH24:MI') AS booking_time,
+        number_of_guests, special_request, status, idempotency_key, created_at, updated_at
+      FROM bookings WHERE booking_reference = ${reference} LIMIT 1
     `) as BookingRow[];
 
     if (rows.length === 0) {
