@@ -4,6 +4,8 @@ import { CalendarCheck, Loader2, PartyPopper, X } from 'lucide-react';
 import { useBookingModal } from '../hooks/useBookingModal';
 import { createBooking } from '../lib/bookingApi';
 import type { BookingRecord } from '../types/booking';
+import DatePickerField from './DatePickerField';
+import TimePickerField from './TimePickerField';
 import {
   formatDisplayDate,
   formatDisplayTime,
@@ -36,15 +38,6 @@ const initialFormState: FormState = {
 };
 
 const todayIso = () => new Date().toISOString().split('T')[0];
-
-/** Some desktop browsers only open the native picker when clicking the small icon - force it open on any click. */
-function openNativePicker(event: { currentTarget: HTMLInputElement }) {
-  try {
-    event.currentTarget.showPicker?.();
-  } catch {
-    // showPicker can throw in browsers that don't support it for this input type - ignore.
-  }
-}
 
 const BookingModal = () => {
   const { isOpen, closeBookingModal } = useBookingModal();
@@ -315,16 +308,12 @@ const BookingModal = () => {
                       >
                         Date <span className="text-brand-red">*</span>
                       </label>
-                      <input
+                      <DatePickerField
                         id="bookingDate"
-                        type="date"
-                        min={minDate}
                         value={form.bookingDate}
-                        onChange={(e) => updateField('bookingDate', e.target.value)}
-                        onClick={openNativePicker}
-                        onFocus={openNativePicker}
-                        className="w-full bg-brand-charcoal-dark border border-brand-gold/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold [color-scheme:dark]"
-                        required
+                        onChange={(next) => updateField('bookingDate', next)}
+                        min={minDate}
+                        hasError={!!fieldErrors.bookingDate}
                       />
                       {fieldErrors.bookingDate && (
                         <p className="text-brand-red text-xs mt-1">{fieldErrors.bookingDate}</p>
@@ -338,15 +327,11 @@ const BookingModal = () => {
                       >
                         Time <span className="text-brand-red">*</span>
                       </label>
-                      <input
+                      <TimePickerField
                         id="bookingTime"
-                        type="time"
                         value={form.bookingTime}
-                        onChange={(e) => updateField('bookingTime', e.target.value)}
-                        onClick={openNativePicker}
-                        onFocus={openNativePicker}
-                        className="w-full bg-brand-charcoal-dark border border-brand-gold/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-brand-gold [color-scheme:dark]"
-                        required
+                        onChange={(next) => updateField('bookingTime', next)}
+                        hasError={!!fieldErrors.bookingTime}
                       />
                       {fieldErrors.bookingTime && (
                         <p className="text-brand-red text-xs mt-1">{fieldErrors.bookingTime}</p>
