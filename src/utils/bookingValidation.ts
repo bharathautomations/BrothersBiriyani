@@ -7,10 +7,12 @@ export function isValidGuestCount(value: string): boolean {
   return Number.isInteger(parsed) && parsed > 0;
 }
 
+// Indian mobile numbers: 10 digits starting 6-9, with an optional +91/91/0 prefix.
+const INDIAN_MOBILE_PATTERN = /^(?:\+91|91|0)?[6-9]\d{9}$/;
+
 export function isValidPhoneNumber(value: string): boolean {
-  const trimmed = value.trim();
-  const digitCount = trimmed.replace(/\D/g, '').length;
-  return /^[+]?[\d\s().-]{7,20}$/.test(trimmed) && digitCount >= 7;
+  const normalized = value.replace(/[\s\-()]/g, '');
+  return INDIAN_MOBILE_PATTERN.test(normalized);
 }
 
 export function isValidEmailAddress(value: string): boolean {
@@ -23,6 +25,24 @@ export function isTodayOrFutureDate(value: string): boolean {
   today.setHours(0, 0, 0, 0);
   const selected = new Date(`${value}T00:00:00`);
   return selected.getTime() >= today.getTime();
+}
+
+export function getLocalTodayIso(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/** When booking for today, requires the time to be at least 1 hour from the current local time. */
+export function isTimeSlotBookable(date: string, time: string): boolean {
+  if (date !== getLocalTodayIso()) return true;
+  const now = new Date();
+  const cutoffMinutes = now.getHours() * 60 + now.getMinutes() + 60;
+  const [hoursStr, minutesStr] = time.split(':');
+  const totalMinutes = Number(hoursStr) * 60 + Number(minutesStr ?? '0');
+  return totalMinutes >= cutoffMinutes;
 }
 
 export function formatDisplayDate(isoDate: string): string {

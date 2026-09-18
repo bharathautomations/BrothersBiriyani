@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { Clock } from 'lucide-react';
+import { isTimeSlotBookable } from '../utils/bookingValidation';
 
 interface TimePickerFieldProps {
   id: string;
   value: string; // HH:MM (24h)
   onChange: (value: string) => void;
   hasError?: boolean;
+  /** YYYY-MM-DD - used to disable slots within 1 hour of now when this is today. */
+  selectedDate: string;
 }
 
 interface TimeOption {
@@ -21,7 +24,10 @@ function formatTimeLabel(hour: number, minute: number): string {
 
 function buildTimeOptions(stepMinutes: number): TimeOption[] {
   const options: TimeOption[] = [];
-  for (let totalMinutes = 0; totalMinutes < 24 * 60; totalMinutes += stepMinutes) {
+  // The restaurant only accepts bookings between 10:00 AM and 10:00 PM.
+  const startMinutes = 10 * 60;
+  const endMinutes = 22 * 60;
+  for (let totalMinutes = startMinutes; totalMinutes <= endMinutes; totalMinutes += stepMinutes) {
     const hour = Math.floor(totalMinutes / 60);
     const minute = totalMinutes % 60;
     options.push({
@@ -40,7 +46,7 @@ const TIME_OPTIONS = buildTimeOptions(30);
  * browser/security software (e.g. Zscaler Browser Isolation can fail to render native
  * <input type="time"> popups).
  */
-const TimePickerField = ({ id, value, onChange, hasError }: TimePickerFieldProps) => {
+const TimePickerField = ({ id, value, onChange, hasError, selectedDate }: TimePickerFieldProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -98,21 +104,26 @@ const TimePickerField = ({ id, value, onChange, hasError }: TimePickerFieldProps
         >
           {TIME_OPTIONS.map((option) => {
             const selected = option.value === value;
+            const disabled = !isTimeSlotBookable(selectedDate, option.value);
             return (
               <button
                 key={option.value}
                 type="button"
                 role="option"
                 aria-selected={selected}
+                aria-disabled={disabled}
                 data-selected={selected}
+                disabled={disabled}
                 onClick={() => {
                   onChange(option.value);
                   setIsOpen(false);
                 }}
                 className={`w-full text-left px-4 py-2 text-sm transition-colors ${
-                  selected
-                    ? 'bg-brand-gold/20 text-brand-gold font-semibold'
-                    : 'text-gray-300 hover:bg-brand-gold/10 hover:text-brand-gold'
+                  disabled
+                    ? 'text-gray-700 cursor-not-allowed'
+                    : selected
+                      ? 'bg-brand-gold/20 text-brand-gold font-semibold'
+                      : 'text-gray-300 hover:bg-brand-gold/10 hover:text-brand-gold'
                 }`}
               >
                 {option.label}

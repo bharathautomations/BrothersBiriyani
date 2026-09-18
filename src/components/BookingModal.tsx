@@ -9,6 +9,7 @@ import TimePickerField from './TimePickerField';
 import {
   formatDisplayDate,
   formatDisplayTime,
+  isTimeSlotBookable,
   isTodayOrFutureDate,
   isValidEmailAddress,
   isValidGuestCount,
@@ -102,6 +103,13 @@ const BookingModal = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, status, closeBookingModal]);
 
+  // Clear a previously chosen time if it falls within 1 hour of now after the date changes.
+  useEffect(() => {
+    if (form.bookingDate && form.bookingTime && !isTimeSlotBookable(form.bookingDate, form.bookingTime)) {
+      setForm((prev) => ({ ...prev, bookingTime: '' }));
+    }
+  }, [form.bookingDate, form.bookingTime]);
+
   if (!isOpen) return null;
 
   const updateField = (field: keyof FormState, value: string) => {
@@ -116,7 +124,7 @@ const BookingModal = () => {
       errors.customerName = 'Please enter your full name.';
     }
     if (!isValidPhoneNumber(form.customerPhone)) {
-      errors.customerPhone = 'Please enter a valid mobile number.';
+      errors.customerPhone = 'Please enter a valid 10-digit Indian mobile number.';
     }
     if (form.customerEmail && !isValidEmailAddress(form.customerEmail)) {
       errors.customerEmail = 'Please enter a valid email address.';
@@ -126,6 +134,8 @@ const BookingModal = () => {
     }
     if (!form.bookingTime) {
       errors.bookingTime = 'Please select a booking time.';
+    } else if (!isTimeSlotBookable(form.bookingDate, form.bookingTime)) {
+      errors.bookingTime = 'Please choose a time at least 1 hour from now.';
     }
     if (!isValidGuestCount(form.numberOfGuests)) {
       errors.numberOfGuests = 'Please enter a valid number of guests (1 or more).';
@@ -332,6 +342,7 @@ const BookingModal = () => {
                         value={form.bookingTime}
                         onChange={(next) => updateField('bookingTime', next)}
                         hasError={!!fieldErrors.bookingTime}
+                        selectedDate={form.bookingDate}
                       />
                       {fieldErrors.bookingTime && (
                         <p className="text-brand-red text-xs mt-1">{fieldErrors.bookingTime}</p>
@@ -398,12 +409,13 @@ const BookingModal = () => {
                       id="customerPhone"
                       type="tel"
                       autoComplete="tel"
-                      placeholder="+1 (234) 567-890"
+                      placeholder="98765 43210"
                       value={form.customerPhone}
                       onChange={(e) => updateField('customerPhone', e.target.value)}
                       className="w-full bg-brand-charcoal-dark border border-brand-gold/20 rounded-lg px-4 py-2.5 text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-gold"
                       required
                     />
+                    <p className="text-gray-500 text-xs mt-1">10-digit Indian mobile number, with or without +91.</p>
                     {fieldErrors.customerPhone && (
                       <p className="text-brand-red text-xs mt-1">{fieldErrors.customerPhone}</p>
                     )}

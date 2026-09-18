@@ -10,6 +10,8 @@ import {
   isValidEmail,
   isValidPhone,
   isValidTimeString,
+  isWithinBookingHours,
+  isTimeSlotBookable,
   parseGuestCount,
   sanitizeText,
 } from './utils/validation';
@@ -64,14 +66,20 @@ export const handler: Handler = async (event: HandlerEvent) => {
   const errors: string[] = [];
 
   if (customerName.length < 2) errors.push('Please enter a valid name.');
-  if (!isValidPhone(customerPhone)) errors.push('Please enter a valid mobile number.');
+  if (!isValidPhone(customerPhone)) errors.push('Please enter a valid 10-digit Indian mobile number.');
   if (customerEmail && !isValidEmail(customerEmail)) errors.push('Please enter a valid email address.');
   if (!isValidDateString(bookingDate)) {
     errors.push('Please select a valid date.');
   } else if (isPastDate(bookingDate)) {
     errors.push('Booking date cannot be in the past.');
   }
-  if (!isValidTimeString(bookingTime)) errors.push('Please select a valid time.');
+  if (!isValidTimeString(bookingTime)) {
+    errors.push('Please select a valid time.');
+  } else if (!isWithinBookingHours(bookingTime)) {
+    errors.push('Bookings are available between 10:00 AM and 10:00 PM.');
+  } else if (!isTimeSlotBookable(bookingDate, bookingTime)) {
+    errors.push('Please choose a time at least 1 hour from now.');
+  }
 
   const guestsResult = parseGuestCount(payload.numberOfGuests);
   if (!guestsResult.valid) errors.push(guestsResult.error);
