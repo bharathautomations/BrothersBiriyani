@@ -30,6 +30,11 @@ function toWhatsAppPhoneNumber(phone: string): string {
   return digits;
 }
 
+/** Strips formatting only (spaces/dashes/parens) - no country-code assumptions. Used for debugging. */
+function toRawWhatsAppNumber(phone: string): string {
+  return phone.replace(/[\s\-()]/g, '');
+}
+
 function logNotificationEvent(entry: {
   bookingReference: string;
   notificationType: 'restaurant' | 'customer';
@@ -184,7 +189,7 @@ export async function sendRestaurantBookingNotification(
           ].join('\n')
         );
 
-  const recipients = config.restaurantNumbers.map(toWhatsAppPhoneNumber);
+  const recipients = config.restaurantNumbers.map(toRawWhatsAppNumber);
   const outcomes = await Promise.all(
     recipients.map(async (to) => {
       const result = await sendWhatsAppMessage(buildPayload(to));
