@@ -1,4 +1,5 @@
 export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'REJECTED';
+export type WhatsAppNotificationStatus = 'PENDING' | 'SENT' | 'FAILED';
 
 // Raw shape of a row as returned by PostgreSQL (snake_case column names).
 export interface BookingRow {
@@ -13,6 +14,10 @@ export interface BookingRow {
   special_request: string | null;
   status: BookingStatus;
   idempotency_key: string | null;
+  customer_whatsapp_status: WhatsAppNotificationStatus;
+  restaurant_whatsapp_status: WhatsAppNotificationStatus;
+  whatsapp_last_error: string | null;
+  whatsapp_sent_at: string | null;
   created_at: string;
   updated_at: string;
 }
