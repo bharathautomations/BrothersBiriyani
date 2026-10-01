@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import FoodCard from './FoodCard';
+import OrderingButtons from './OrderingButtons';
 
 const MenuSection = () => {
   const menuItems = [
@@ -112,6 +113,17 @@ const MenuSection = () => {
           <button className="btn-secondary text-lg px-10 py-4">
             View Full Menu
           </button>
+        </motion.div>
+
+        {/* Order for delivery - separate from the full menu/table booking above */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mt-8"
+        >
+          <p className="text-gray-400 mb-4">Craving delivery instead? Order now:</p>
+          <OrderingButtons className="justify-center" />
         </motion.div>
       </div>
     </section>

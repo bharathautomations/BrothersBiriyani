@@ -5,6 +5,7 @@ import {
   Mail,
   Heart,
 } from 'lucide-react';
+import OrderingButtons from './OrderingButtons';
 
 const Footer = () => {
   const quickLinks = [
@@ -61,6 +62,8 @@ const Footer = () => {
               Serving authentic Naati Style Bucket Biriyani with love and tradition since
               2009. Every dish is a celebration of flavors.
             </p>
+            <p className="text-gray-500 text-xs xs:text-sm mb-3">Order online:</p>
+            <OrderingButtons variant="compact" />
           </motion.div>
 
           {/* Quick Links */}

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { ChevronDown, Sparkles, CalendarCheck } from 'lucide-react';
 import { useBookingModal } from '../hooks/useBookingModal';
+import OrderingButtons from './OrderingButtons';
 
 const Hero = () => {
   const { openBookingModal } = useBookingModal();
@@ -145,6 +146,19 @@ const Hero = () => {
                 <CalendarCheck size={20} />
                 Book a Table
               </button>
+            </motion.div>
+
+            {/* Order food for delivery - separate from Book a Table, which uses our own booking system */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="mt-6 xs:mt-7"
+            >
+              <p className="text-gray-400 text-xs xs:text-sm mb-3 text-center lg:text-left">
+                Prefer delivery? Order food online:
+              </p>
+              <OrderingButtons className="justify-center lg:justify-start" />
             </motion.div>
           </motion.div>
 
