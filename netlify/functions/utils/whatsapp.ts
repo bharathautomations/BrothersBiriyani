@@ -5,7 +5,7 @@
 
 import { getWhatsAppConfig, getWhatsAppConfigError } from './whatsappConfig';
 import type { WhatsAppSendResult } from './whatsappStatus';
-import type { BookingResponsePayload } from './types';
+import type { BookingResponsePayload, BookingStatus } from './types';
 
 function formatDate(isoDate: string): string {
   const [year, month, day] = isoDate.split('-').map(Number);
@@ -260,3 +260,57 @@ export async function sendCustomerBookingConfirmation(
   logNotificationEvent({ bookingReference: booking.bookingReference, notificationType: 'customer', destination: to, result });
   return result;
 }
+
+/**
+ * Sends a status-change notification to the customer when admin staff confirm, cancel,
+ * reject, or complete a booking. Reuses the same send/log/config infrastructure as the
+ * other notifications - never called twice for the same status (caller only invokes this
+ * when the status actually changed) so it never produces duplicate notifications.
+ */
+export async function sendCustomerStatusUpdateNotification(
+  booking: BookingResponsePayload,
+  newStatus: BookingStatus
+): Promise<WhatsAppSendResult> {
+  const config = getWhatsAppConfig();
+  if (!config.enabled) return { success: false, error: 'WhatsApp notifications are disabled.' };
+
+  const to = toWhatsAppPhoneNumber(booking.customerPhone);
+  const formattedDate = formatDate(booking.bookingDate);
+  const formattedTime = formatTime(booking.bookingTime);
+
+  const payload =
+    config.messageMode === 'template' && config.statusUpdateTemplateName
+      ? buildTemplatePayload(
+          to,
+          config.statusUpdateTemplateName,
+          config.templateLanguage,
+          [booking.bookingReference, newStatus, formattedDate, formattedTime].slice(
+            0,
+            Math.max(0, config.statusUpdateTemplateParamCount)
+          )
+        )
+      : buildTextPayload(
+          to,
+          [
+            '🍽️ BROTHERS BIRIYANI',
+            '',
+            `Your booking status has been updated to: ${newStatus}`,
+            '',
+            'Booking ID:',
+            booking.bookingReference,
+            '',
+            'Date:',
+            formattedDate,
+            '',
+            'Time:',
+            formattedTime,
+            '',
+            'Thank you for choosing Brothers Biriyani.',
+          ].join('\n')
+        );
+
+  const result = await sendWhatsAppMessage(payload);
+  logNotificationEvent({ bookingReference: booking.bookingReference, notificationType: 'customer', destination: to, result });
+  return result;
+}
+

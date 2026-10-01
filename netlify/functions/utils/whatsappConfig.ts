@@ -15,7 +15,15 @@ export interface WhatsAppConfig {
   /** How many of our 8 standard values to send as template parameters (0 for a no-variable template). */
   restaurantTemplateParamCount: number;
   customerTemplateName: string | null;
+  /** Template used when a booking's status changes (confirmed/cancelled/rejected) - sent to the customer. */
+  statusUpdateTemplateName: string | null;
+  statusUpdateTemplateParamCount: number;
   templateLanguage: string;
+}
+
+function parseParamCount(value: string | undefined, fallback: number): number {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : fallback;
 }
 
 export function getWhatsAppConfig(): WhatsAppConfig {
@@ -31,10 +39,10 @@ export function getWhatsAppConfig(): WhatsAppConfig {
       .filter((value) => value.length > 0),
     messageMode: process.env.WHATSAPP_MESSAGE_MODE === 'template' ? 'template' : 'text',
     restaurantTemplateName: process.env.WHATSAPP_RESTAURANT_TEMPLATE_NAME || null,
-    restaurantTemplateParamCount: Number.isInteger(Number(process.env.WHATSAPP_RESTAURANT_TEMPLATE_PARAM_COUNT))
-      ? Number(process.env.WHATSAPP_RESTAURANT_TEMPLATE_PARAM_COUNT)
-      : 8,
+    restaurantTemplateParamCount: parseParamCount(process.env.WHATSAPP_RESTAURANT_TEMPLATE_PARAM_COUNT, 8),
     customerTemplateName: process.env.WHATSAPP_CUSTOMER_TEMPLATE_NAME || null,
+    statusUpdateTemplateName: process.env.WHATSAPP_STATUS_UPDATE_TEMPLATE_NAME || null,
+    statusUpdateTemplateParamCount: parseParamCount(process.env.WHATSAPP_STATUS_UPDATE_TEMPLATE_PARAM_COUNT, 4),
     templateLanguage: process.env.WHATSAPP_TEMPLATE_LANGUAGE || 'en_US',
   };
 }

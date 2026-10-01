@@ -5,12 +5,14 @@ A modern, responsive restaurant landing page built with React, TypeScript, Vite,
 ## 📦 Tech Stack
 
 - **React 19 + TypeScript** - UI
+- **React Router** - client-side routing (customer site at `/`, staff dashboard at `/admin/*`)
 - **Vite** - Build tool and dev server
 - **Tailwind CSS** - Styling
 - **Framer Motion** - Animations
 - **Lucide React** - Icons
-- **Netlify Functions** - Serverless backend for table bookings
+- **Netlify Functions** - Serverless backend for table bookings and the admin dashboard
 - **PostgreSQL (Netlify DB / Neon)** - Booking storage, via `@neondatabase/serverless`
+- **bcryptjs + jsonwebtoken** - Admin password hashing and session cookies (server-side only)
 
 ## 🚀 Local Development
 
@@ -223,8 +225,67 @@ Set `WHATSAPP_ENABLED=false` (or leave it unset) to develop and test the booking
 
 - WhatsApp is only attempted **after** the booking is already committed to PostgreSQL - a booking is never deleted, cancelled, or blocked because of a WhatsApp failure.
 - `restaurant_whatsapp_status` reflects the restaurant/owner notification; it's marked `SENT` only once every configured owner number has received it, otherwise `FAILED` with a per-number breakdown in `whatsapp_last_error`.
-- `customer_whatsapp_status` is unused by the current flow (customers are not messaged) and stays `PENDING` indefinitely - this is expected, not a bug.
+- `customer_whatsapp_status` tracks the customer-facing status-change notification sent from the admin dashboard (see below) when staff confirm/cancel/reject/complete a booking - it stays `PENDING` until such an action happens.
 - `POST /api/retry-whatsapp-notification` with `{ "bookingReference": "BB-..." }` retries the restaurant notification if it previously failed, with a 60-second cooldown between attempts, and never creates a duplicate booking or re-sends if it's already `SENT`.
+
+## 🔒 Admin Dashboard
+
+A staff-only booking management dashboard is available at **`/admin/bookings`**. It reuses the existing `bookings` table and WhatsApp notification system - no duplicate tables, no new booking logic, and no seat/capacity calculations anywhere.
+
+### 1. Admin setup
+
+The dashboard needs no separate database table or user accounts - it's a single shared admin credential, appropriate for one restaurant's staff.
+
+1. Choose a strong password and generate its bcrypt hash locally (never store the plaintext password anywhere):
+   ```bash
+   node scripts/hash-admin-password.mjs "YourChosenPassword"
+   ```
+2. Generate a long random session-signing secret:
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+   ```
+3. Add both as Netlify environment variables (see below) and redeploy.
+
+### 2. Authentication setup
+
+- Staff log in with the shared password at `/admin/login`. The password is checked server-side against `ADMIN_PASSWORD_HASH` using `bcrypt.compare` - the plaintext password is never stored anywhere, only the hash.
+- On success, the server issues a signed session token (`ADMIN_SESSION_SECRET`, via `jsonwebtoken`) as an `HttpOnly`, `Secure`, `SameSite=Strict` cookie - it cannot be read by JavaScript (mitigates XSS token theft) and is never sent cross-site.
+- Every admin API endpoint (`admin-summary`, `admin-list-bookings`, `admin-update-booking-status`) independently verifies this cookie server-side before doing anything - there is no client-side-only gate.
+- Sessions last 12 hours; `/admin/login` and `POST /api/admin-logout` are the only ways to start/end one.
+
+### 3. Environment variables
+
+| Variable | Required | Description |
+|---|---|---|
+| `ADMIN_PASSWORD_HASH` | Yes | Bcrypt hash of the staff password (see setup above). |
+| `ADMIN_SESSION_SECRET` | Yes | Long random string used to sign/verify session cookies. |
+
+These are read only inside `netlify/functions` and are never sent to the frontend.
+
+### 4. Deployment instructions
+
+No new database migration is required - the admin dashboard reuses the existing `bookings` table and its existing columns (including the WhatsApp status columns from migration 002) as-is. Just:
+1. Add `ADMIN_PASSWORD_HASH` and `ADMIN_SESSION_SECRET` to Netlify's environment variables.
+2. Deploy as usual (`git push`, Netlify auto-deploys).
+3. Visit `https://yourdomain/admin/login`.
+
+### 5. How staff access the dashboard
+
+- Go to `/admin/login`, enter the shared password, and you're redirected to `/admin/bookings`.
+- The dashboard is fully responsive - staff can check today's bookings from a phone, tablet, or desktop.
+- `/admin/bookings` itself redirects back to `/admin/login` if there is no valid session.
+
+### 6. How bookings are managed
+
+- The dashboard summary shows Today's Bookings, Upcoming Bookings, **Today's Total Guests** (sum of `number_of_guests` for today's non-cancelled/non-rejected bookings - purely informational, never compared against any capacity), and overall Confirmed/Pending/Cancelled counts.
+- The booking list can be filtered by date view (Today/Tomorrow/Upcoming/Custom Date), status, customer name, or phone, and sorted by date, time, guest count, or created time. Bookings are grouped by date with a per-date "Total expected guests" figure - again informational only.
+- Clicking a booking opens its full details (contact info, special request, timestamps, WhatsApp status) with action buttons to **Confirm**, **Cancel**, **Reject**, or mark **Completed** - these only ever change the `status` column; guest count is never a factor in whether an action is allowed.
+- Status changes are idempotent: setting a booking to a status it already has is a no-op and never sends a duplicate WhatsApp notification.
+
+### 7. How WhatsApp notifications are monitored
+
+- Each booking's details panel shows **Restaurant WhatsApp** and **Customer WhatsApp** delivery status (`SENT` / `FAILED` / `PENDING`), plus the last error message if one occurred.
+- When staff confirm, cancel, reject, or complete a booking, the existing WhatsApp service (`sendCustomerStatusUpdateNotification`) sends a status-change message to the customer, reusing the same template/text-mode configuration already documented above - no separate WhatsApp integration was built.
 
 ## �📱 Sections
 
