@@ -65,7 +65,7 @@ interface TemplatePayload {
   template: {
     name: string;
     language: { code: string };
-    components: [{ type: 'body'; parameters: { type: 'text'; text: string }[] }];
+    components?: [{ type: 'body'; parameters: { type: 'text'; text: string }[] }];
   };
 }
 
@@ -86,7 +86,11 @@ function buildTemplatePayload(
     template: {
       name: templateName,
       language: { code: languageCode },
-      components: [{ type: 'body', parameters: parameters.map((text) => ({ type: 'text', text })) }],
+      // Templates approved with zero variables must be called with no components at all -
+      // sending an empty/mismatched parameters array causes a 132000 API error.
+      ...(parameters.length > 0
+        ? { components: [{ type: 'body', parameters: parameters.map((text) => ({ type: 'text', text })) }] as [{ type: 'body'; parameters: { type: 'text'; text: string }[] }] }
+        : {}),
     },
   };
 }
@@ -142,16 +146,21 @@ export async function sendRestaurantBookingNotification(
 
   const buildPayload = (to: string) =>
     config.messageMode === 'template' && config.restaurantTemplateName
-      ? buildTemplatePayload(to, config.restaurantTemplateName, config.templateLanguage, [
-          booking.bookingReference,
-          booking.customerName,
-          booking.customerPhone,
-          formattedDate,
-          formattedTime,
-          String(booking.numberOfGuests),
-          specialRequest,
-          booking.status,
-        ])
+      ? buildTemplatePayload(
+          to,
+          config.restaurantTemplateName,
+          config.templateLanguage,
+          [
+            booking.bookingReference,
+            booking.customerName,
+            booking.customerPhone,
+            formattedDate,
+            formattedTime,
+            String(booking.numberOfGuests),
+            specialRequest,
+            booking.status,
+          ].slice(0, Math.max(0, config.restaurantTemplateParamCount))
+        )
       : buildTextPayload(
           to,
           [

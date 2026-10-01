@@ -12,6 +12,8 @@ export interface WhatsAppConfig {
   /** 'template' is required for production once outside a 24h customer service session. */
   messageMode: 'template' | 'text';
   restaurantTemplateName: string | null;
+  /** How many of our 8 standard values to send as template parameters (0 for a no-variable template). */
+  restaurantTemplateParamCount: number;
   customerTemplateName: string | null;
   templateLanguage: string;
 }
@@ -29,6 +31,9 @@ export function getWhatsAppConfig(): WhatsAppConfig {
       .filter((value) => value.length > 0),
     messageMode: process.env.WHATSAPP_MESSAGE_MODE === 'template' ? 'template' : 'text',
     restaurantTemplateName: process.env.WHATSAPP_RESTAURANT_TEMPLATE_NAME || null,
+    restaurantTemplateParamCount: Number.isInteger(Number(process.env.WHATSAPP_RESTAURANT_TEMPLATE_PARAM_COUNT))
+      ? Number(process.env.WHATSAPP_RESTAURANT_TEMPLATE_PARAM_COUNT)
+      : 8,
     customerTemplateName: process.env.WHATSAPP_CUSTOMER_TEMPLATE_NAME || null,
     templateLanguage: process.env.WHATSAPP_TEMPLATE_LANGUAGE || 'en_US',
   };
