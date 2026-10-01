@@ -15,7 +15,7 @@ const OrderingButtons = ({ variant = 'full', className = '' }: OrderingButtonsPr
       ? 'text-sm px-5 py-2.5'
       : 'text-sm xs:text-base md:text-lg px-6 xs:px-8 py-2.5 xs:py-3';
 
-  const baseButtonClasses = `${sizeClasses} w-full xs:w-auto inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-brand-charcoal-dark`;
+  const baseButtonClasses = `${sizeClasses} w-full xs:w-auto inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-charcoal-dark`;
 
   return (
     <div className={`flex flex-col xs:flex-row items-center gap-3 ${className}`}>
@@ -24,7 +24,7 @@ const OrderingButtons = ({ variant = 'full', className = '' }: OrderingButtonsPr
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Order food on Zomato (opens in a new tab)"
-        className={`${baseButtonClasses} border-2 border-brand-red text-brand-red hover:bg-brand-red hover:text-white focus:ring-brand-red`}
+        className={`${baseButtonClasses} border-2 border-brand-red text-[#F87171] hover:bg-brand-red hover:text-white focus-visible:ring-brand-red`}
       >
         🍽️ Order on Zomato
       </a>
@@ -33,7 +33,7 @@ const OrderingButtons = ({ variant = 'full', className = '' }: OrderingButtonsPr
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Order food on Swiggy (opens in a new tab)"
-        className={`${baseButtonClasses} border-2 border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white focus:ring-brand-orange`}
+        className={`${baseButtonClasses} border-2 border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-brand-charcoal-dark focus-visible:ring-brand-orange`}
       >
         🛵 Order on Swiggy
       </a>
