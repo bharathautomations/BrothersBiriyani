@@ -45,8 +45,8 @@ const BookingFilters = ({ filters, onChange }: BookingFiltersProps) => {
         />
       )}
 
-      {/* Search + status + sort */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      {/* Search + time + status + sort */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
           <input
@@ -67,6 +67,13 @@ const BookingFilters = ({ filters, onChange }: BookingFiltersProps) => {
             className="w-full bg-brand-charcoal-dark border border-brand-gold/20 rounded-lg pl-9 pr-3 py-2 text-white placeholder:text-gray-600 text-sm"
           />
         </div>
+        <input
+          type="time"
+          value={filters.time ?? ''}
+          onChange={(e) => onChange({ ...filters, time: e.target.value, page: 1 })}
+          className="bg-brand-charcoal-dark border border-brand-gold/20 rounded-lg px-3 py-2 text-white text-sm [color-scheme:dark]"
+          aria-label="Filter by time"
+        />
         <select
           value={filters.status ?? ''}
           onChange={(e) => onChange({ ...filters, status: e.target.value as BookingStatus | '', page: 1 })}

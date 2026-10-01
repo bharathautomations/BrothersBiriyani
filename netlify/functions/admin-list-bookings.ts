@@ -21,6 +21,7 @@ const SORT_COLUMNS: Record<string, string> = {
   created: 'created_at',
 };
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
 const MAX_LIMIT = 200;
 const DEFAULT_LIMIT = 50;
 
@@ -53,6 +54,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
   const query = event.queryStringParameters ?? {};
   const view = query.view ?? '';
   const customDate = query.date ?? '';
+  const time = query.time ?? '';
   const status = (query.status ?? '').toUpperCase();
   const customerName = query.customerName ?? '';
   const phone = query.phone ?? '';
@@ -67,6 +69,9 @@ export const handler: Handler = async (event: HandlerEvent) => {
   }
   if (customDate && !DATE_PATTERN.test(customDate)) {
     return jsonResponse(400, { success: false, error: 'Invalid date filter.' });
+  }
+  if (time && !TIME_PATTERN.test(time)) {
+    return jsonResponse(400, { success: false, error: 'Invalid time filter.' });
   }
 
   const conditions: string[] = [];
@@ -89,6 +94,10 @@ export const handler: Handler = async (event: HandlerEvent) => {
   if (status) {
     params.push(status);
     conditions.push(`status = $${params.length}`);
+  }
+  if (time) {
+    params.push(time);
+    conditions.push(`booking_time = $${params.length}`);
   }
   if (customerName) {
     params.push(`%${customerName}%`);

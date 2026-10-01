@@ -31,6 +31,7 @@ export interface AdminSummary {
 export interface BookingListFilters {
   view?: 'today' | 'tomorrow' | 'upcoming' | 'custom';
   date?: string;
+  time?: string;
   status?: BookingStatus | '';
   customerName?: string;
   phone?: string;
@@ -86,6 +87,7 @@ export async function fetchAdminBookings(
   const params = new URLSearchParams();
   if (filters.view) params.set('view', filters.view);
   if (filters.date) params.set('date', filters.date);
+  if (filters.time) params.set('time', filters.time);
   if (filters.status) params.set('status', filters.status);
   if (filters.customerName) params.set('customerName', filters.customerName);
   if (filters.phone) params.set('phone', filters.phone);
