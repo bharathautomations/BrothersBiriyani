@@ -1,70 +1,12 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 import FoodCard from './FoodCard';
 import OrderingButtons from './OrderingButtons';
+import { signatureDishes, menuCategories } from '../data/menu';
 
 const MenuSection = () => {
-  const menuItems = [
-    {
-      name: 'Chicken Dum Biriyani',
-      description:
-        'Slow-cooked perfection where turmeric-infused basmati embraces juicy chicken in a symphony of aromatic spices, served with tangy curry, fresh cilantro raita, and zesty lime.',
-      price: '$12.99',
-      image: '/images/ChickenDumBiriyani.jpeg',
-      rating: 5,
-      isPopular: true,
-    },
-    {
-      name: 'Mutton Biriyani',
-      description:
-        'Long-grain basmati infused with saffron strands and whole spices, crowned with fall-apart-tender mutton, complemented by cooling raita, spicy curry, and crisp onions on fresh banana leaf.',
-      price: '$15.99',
-      image: '/images/MuttonBiriyani.jpeg',
-      rating: 5,
-      isPopular: true,
-    },
-    {
-      name: 'Chicken Biriyani with Kebab',
-      description:
-        'Golden saffron-kissed basmati rice layered with tender chicken, accompanied by smoky charcoal-grilled kebabs, cooling mint raita, and aromatic spiced curry—a complete feast on a banana leaf.',
-      price: '$16.99',
-      image: '/images/ChickenBiriyaniWithKebab.jpeg',
-      rating: 5,
-      isPopular: true,
-    },
-    {
-      name: 'Chicken Kebab',
-      description:
-        'Tandoori-spiced chicken pieces kissed by fire, featuring a deep crimson marinade of red chili, paprika, and garam masala, served with pink onion rings and fresh lime on a traditional banana leaf.',
-      price: '$8.99',
-      image: '/images/ChickenKebab.jpeg',
-      rating: 5,
-    },
-    {
-      name: 'Chicken Lollipop',
-      description:
-        'Crispy Indo-Chinese drumstick delights with a fiery red pepper coating, double-fried to golden perfection and garnished with tangy onion rings and a citrus squeeze.',
-      price: '$9.99',
-      image: '/images/ChickenLollipop.jpeg',
-      rating: 4,
-    },
-    {
-      name: 'Kaal Soup',
-      description:
-        'Rustic bone-in mutton soup simmered with earthy peppercorns, warming ginger, and aromatic star anise in a soul-soothing golden broth—a traditional remedy and delicacy.',
-      price: '$6.99',
-      image: '/images/KaalSoup.jpeg',
-      rating: 5,
-    },
-    {
-      name: 'Chicken Bucket Biriyani Mega',
-      description:
-        'Family-sized bucket overflowing with fragrant golden biriyani studded with succulent chicken pieces, served with tandoori kebabs, creamy raita, and rich curry for the ultimate sharing experience.',
-      price: '$45.99',
-      image: '/images/ChickenBucketBiriyaniMega.jpeg',
-      rating: 5,
-      isPopular: true,
-    },
-  ];
+  const [showFullMenu, setShowFullMenu] = useState(false);
 
   return (
     <section id="menu" className="py-20 bg-brand-charcoal-dark relative overflow-hidden">
@@ -98,7 +40,7 @@ const MenuSection = () => {
 
         {/* Menu Grid - Responsive for all screen sizes */}
         <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6 xs:gap-7 sm:gap-8 md:gap-8 lg:gap-10 xl:gap-12">
-          {menuItems.map((item, index) => (
+          {signatureDishes.map((item, index) => (
             <FoodCard key={index} {...item} delay={index * 0.1} />
           ))}
         </div>
@@ -110,10 +52,51 @@ const MenuSection = () => {
           viewport={{ once: true }}
           className="text-center mt-12"
         >
-          <button className="btn-secondary text-lg px-10 py-4">
-            View Full Menu
+          <button
+            onClick={() => setShowFullMenu((prev) => !prev)}
+            className="btn-secondary text-lg px-10 py-4 inline-flex items-center gap-2"
+            aria-expanded={showFullMenu}
+            aria-controls="full-menu-list"
+          >
+            {showFullMenu ? 'Hide Full Menu' : 'View Full Menu'}
+            <motion.span animate={{ rotate: showFullMenu ? 180 : 0 }} transition={{ duration: 0.3 }}>
+              <ChevronDown size={20} />
+            </motion.span>
           </button>
         </motion.div>
+
+        {/* Full Menu - categorized list of every item on the physical menu card */}
+        <AnimatePresence>
+          {showFullMenu && (
+            <motion.div
+              id="full-menu-list"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.4 }}
+              className="overflow-hidden mt-10"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8 max-w-5xl mx-auto">
+                {menuCategories.map((category) => (
+                  <div key={category.id}>
+                    <h3 className="text-brand-gold font-bold text-lg uppercase tracking-wide mb-4 border-b border-brand-gold/20 pb-2">
+                      {category.name}
+                    </h3>
+                    <ul className="space-y-3">
+                      {category.items.map((item) => (
+                        <li key={item.name} className="flex items-baseline justify-between gap-4">
+                          <span className="text-gray-300">{item.name}</span>
+                          <span className="flex-1 border-b border-dashed border-gray-700 mx-2" />
+                          <span className="text-brand-gold font-semibold">{item.price}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Order for delivery - separate from the full menu/table booking above */}
         <motion.div
@@ -131,3 +114,4 @@ const MenuSection = () => {
 };
 
 export default MenuSection;
+

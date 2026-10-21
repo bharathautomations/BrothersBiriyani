@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Phone, MapPin, Clock, Mail } from 'lucide-react';
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from '../data/branches';
 
 const CTASection = () => {
   return (
@@ -91,10 +92,10 @@ const CTASection = () => {
                   <div>
                     <h4 className="text-white font-semibold mb-1">Phone</h4>
                     <a
-                      href="tel:+1234567890"
+                      href={`tel:${CONTACT_PHONE_TEL}`}
                       className="text-gray-400 hover:text-brand-gold transition-colors"
                     >
-                      +1 (234) 567-890
+                      {CONTACT_PHONE_DISPLAY}
                     </a>
                   </div>
                 </div>
@@ -107,9 +108,10 @@ const CTASection = () => {
                   <div>
                     <h4 className="text-white font-semibold mb-1">Address</h4>
                     <p className="text-gray-400">
-                      123 Biriyani Street, Food District
-                      <br />
-                      Your City, State 12345
+                      3 locations across Bengaluru -{' '}
+                      <a href="#locations" className="hover:text-brand-gold transition-colors underline">
+                        view all branches
+                      </a>
                     </p>
                   </div>
                 </div>
@@ -126,7 +128,7 @@ const CTASection = () => {
                     <p className="text-gray-400">
                       Monday - Sunday
                       <br />
-                      11:00 AM - 11:00 PM
+                      10:00 AM - 10:00 PM
                     </p>
                   </div>
                 </div>

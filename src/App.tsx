@@ -7,6 +7,7 @@ import AboutSection from './components/AboutSection';
 import WhyChooseUs from './components/WhyChooseUs';
 import Gallery from './components/Gallery';
 import Testimonials from './components/Testimonials';
+import Locations from './components/Locations';
 import CTASection from './components/CTASection';
 import FinalCTA from './components/FinalCTA';
 import Footer from './components/Footer';
@@ -31,6 +32,7 @@ function App() {
           <WhyChooseUs />
           <Gallery />
           <Testimonials />
+          <Locations />
           <CTASection />
           <FinalCTA />
         </main>

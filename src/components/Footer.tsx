@@ -6,6 +6,7 @@ import {
   Heart,
 } from 'lucide-react';
 import OrderingButtons from './OrderingButtons';
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from '../data/branches';
 
 const Footer = () => {
   const quickLinks = [
@@ -13,6 +14,7 @@ const Footer = () => {
     { name: 'Menu', href: '#menu' },
     { name: 'About', href: '#about' },
     { name: 'Gallery', href: '#gallery' },
+    { name: 'Locations', href: '#locations' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -123,15 +125,17 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-start space-x-3 text-gray-400">
                 <MapPin className="text-brand-gold flex-shrink-0 mt-1" size={18} />
-                <span>123 Biriyani Street, Food District, Your City 12345</span>
+                <a href="#locations" className="hover:text-brand-gold transition-colors">
+                  3 locations across Bengaluru - view all
+                </a>
               </li>
               <li className="flex items-start space-x-3">
                 <Phone className="text-brand-gold flex-shrink-0 mt-1" size={18} />
                 <a
-                  href="tel:+1234567890"
+                  href={`tel:${CONTACT_PHONE_TEL}`}
                   className="text-gray-400 hover:text-brand-gold transition-colors"
                 >
-                  +1 (234) 567-890
+                  {CONTACT_PHONE_DISPLAY}
                 </a>
               </li>
               <li className="flex items-start space-x-3">

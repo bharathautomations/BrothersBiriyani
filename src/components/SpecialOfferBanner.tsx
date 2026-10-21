@@ -137,7 +137,7 @@ const SpecialOfferBanner = () => {
               whileHover={{ scale: 1.05, y: -5 }}
               whileTap={{ scale: 0.95 }}
               className="group inline-flex items-center space-x-3 bg-brand-charcoal-dark text-white px-8 py-4 rounded-full text-lg font-bold shadow-2xl hover:shadow-3xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 focus:ring-offset-brand-red"
-              aria-label="Order family pack biriyani for $45.99"
+              aria-label="Order family pack biriyani for ₹1,800"
             >
               <span>Order Family Pack</span>
               <motion.div
