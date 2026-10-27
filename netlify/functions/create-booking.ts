@@ -4,9 +4,6 @@ import { toBookingResponse } from './utils/mapBooking';
 import { generateBookingReference } from './utils/reference';
 import { isWithinRateLimit } from './utils/rateLimit';
 import type { BookingRow } from './utils/types';
-import { getWhatsAppConfig } from './utils/whatsappConfig';
-import { sendRestaurantBookingNotification } from './utils/whatsapp';
-import { toNotificationStatus } from './utils/whatsappStatus';
 import {
   isPastDate,
   isValidDateString,
@@ -25,10 +22,6 @@ function jsonResponse(statusCode: number, body: unknown) {
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
     body: JSON.stringify(body),
   };
-}
-
-function describeRejection(reason: unknown): string {
-  return reason instanceof Error ? reason.message : 'Unknown WhatsApp notification error.';
 }
 
 // Idempotency keys are client-generated UUIDs; this pattern just guards against garbage input.
@@ -154,35 +147,12 @@ export const handler: Handler = async (event: HandlerEvent) => {
     `) as BookingRow[];
 
     if (inserted.length > 0) {
-      const booking = toBookingResponse(inserted[0]);
-
-      // Booking creation and WhatsApp delivery are independent: a WhatsApp failure never
-      // undoes or blocks the booking, which is already committed at this point.
-      // Only the restaurant/owner numbers are notified - customers rely on the on-screen
-      // confirmation, so no customer-facing WhatsApp message (and no Meta billing) is needed.
-      if (getWhatsAppConfig().enabled) {
-        const restaurantOutcome = await Promise.allSettled([sendRestaurantBookingNotification(booking)]);
-        const restaurantResult =
-          restaurantOutcome[0].status === 'fulfilled'
-            ? restaurantOutcome[0].value
-            : { success: false, error: describeRejection(restaurantOutcome[0].reason) };
-
-        try {
-          await sql`
-            UPDATE bookings
-            SET
-              restaurant_whatsapp_status = ${toNotificationStatus(restaurantResult)},
-              whatsapp_last_error = ${restaurantResult.error ?? null},
-              whatsapp_sent_at = now()
-            WHERE id = ${inserted[0].id}
-          `;
-        } catch (statusUpdateError) {
-          // Never fail the booking response just because status bookkeeping failed.
-          console.error('create-booking: failed to persist WhatsApp status', statusUpdateError);
-        }
-      }
-
-      return jsonResponse(201, { success: true, booking });
+      // The restaurant WhatsApp notification is NOT sent here - it would mean every
+      // concurrent booking fires its own simultaneous Meta API call, which exceeds
+      // WhatsApp's per-number throughput limit under any real burst (confirmed via load
+      // testing). The row stays restaurant_whatsapp_status='PENDING' (its DB default) and
+      // is picked up and sent at a safe, throttled pace by send-whatsapp-queue.ts instead.
+      return jsonResponse(201, { success: true, booking: toBookingResponse(inserted[0]) });
     }
 
     // A concurrent request with the same idempotency key won the race - return that row.
