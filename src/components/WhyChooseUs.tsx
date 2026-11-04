@@ -111,9 +111,9 @@ const WhyChooseUs = () => {
           <p className="text-gray-300 text-lg mb-6">
             Ready to taste the difference?
           </p>
-          <button className="btn-primary text-lg px-10 py-4">
+          <span className="inline-block bg-brand-gold/10 border border-brand-gold/30 rounded-full text-brand-gold font-semibold text-lg px-10 py-4">
             Order Your First Meal
-          </button>
+          </span>
         </motion.div>
       </div>
     </section>

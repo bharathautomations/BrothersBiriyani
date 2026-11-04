@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion';
-import { Phone, MapPin, Clock, Mail } from 'lucide-react';
+import { Phone, MapPin, Clock, Mail, CalendarCheck } from 'lucide-react';
 import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from '../data/branches';
+import { useBookingModal } from '../hooks/useBookingModal';
 
 const CTASection = () => {
+  const { openBookingModal } = useBookingModal();
+
   return (
     <section
       id="contact"
@@ -55,6 +58,13 @@ const CTASection = () => {
               <button className="btn-secondary text-base xs:text-lg px-8 xs:px-10 py-3 xs:py-4 w-full sm:w-auto">
                 Call to Order
               </button>
+              <button
+                onClick={openBookingModal}
+                className="btn-secondary text-base xs:text-lg px-8 xs:px-10 py-3 xs:py-4 w-full sm:w-auto flex items-center justify-center gap-2"
+              >
+                <CalendarCheck size={20} />
+                Book a Table
+              </button>
             </div>
 
             {/* Special Offer Badge */}
@@ -65,7 +75,7 @@ const CTASection = () => {
               transition={{ delay: 0.3 }}
               className="inline-block bg-gradient-to-r from-brand-red to-brand-orange text-white font-bold px-4 xs:px-5 sm:px-6 py-2.5 xs:py-3 rounded-full shadow-lg text-xs xs:text-sm sm:text-base"
             >
-              🎉 20% OFF on First Order - Use Code: WELCOME20
+              🎉 20% OFF on Booking a Table
             </motion.div>
           </motion.div>
 

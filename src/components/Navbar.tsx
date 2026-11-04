@@ -88,28 +88,23 @@ const Navbar = () => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               onClick={openBookingModal}
-              className="btn-secondary text-sm py-2.5 px-6 flex items-center gap-2"
+              className="btn-primary text-sm py-2.5 px-8 flex items-center gap-2"
               aria-label="Book a table"
             >
               <CalendarCheck size={16} />
               Book a Table
             </motion.button>
-
-            {/* Primary CTA */}
-            <motion.button
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="btn-primary text-sm py-2.5 px-8"
-              aria-label="Order food online"
-            >
-              Order Now
-            </motion.button>
           </div>
 
-          {/* Mobile - Logo, Hamburger & Order Now */}
+          {/* Mobile - Logo, Hamburger & Book a Table */}
           <div className="lg:hidden flex items-center space-x-3">
-            <button className="btn-primary text-xs py-2 px-4" aria-label="Order food online">
-              Order Now
+            <button
+              onClick={openBookingModal}
+              className="btn-primary text-xs py-2 px-4 flex items-center gap-1.5"
+              aria-label="Book a table"
+            >
+              <CalendarCheck size={14} />
+              Book a Table
             </button>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

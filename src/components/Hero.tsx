@@ -132,20 +132,17 @@ const Hero = () => {
               transition={{ delay: 0.5 }}
               className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 xs:gap-4"
             >
-              <button className="btn-primary text-sm xs:text-base md:text-lg xl:text-xl px-6 xs:px-8 md:px-10 xl:px-12 py-2.5 xs:py-3 md:py-4 xl:py-5 w-full sm:w-auto" aria-label="Order food online now">
-                Order Now
-              </button>
-              <a href="#menu" className="btn-secondary text-sm xs:text-base md:text-lg xl:text-xl px-6 xs:px-8 md:px-10 xl:px-12 py-2.5 xs:py-3 md:py-4 xl:py-5 w-full sm:w-auto inline-block text-center" aria-label="View our food menu">
-                Explore Our Menu
-              </a>
               <button
                 onClick={openBookingModal}
-                className="btn-secondary text-sm xs:text-base md:text-lg xl:text-xl px-6 xs:px-8 md:px-10 xl:px-12 py-2.5 xs:py-3 md:py-4 xl:py-5 w-full sm:w-auto flex items-center justify-center gap-2"
+                className="btn-primary text-sm xs:text-base md:text-lg xl:text-xl px-6 xs:px-8 md:px-10 xl:px-12 py-2.5 xs:py-3 md:py-4 xl:py-5 w-full sm:w-auto flex items-center justify-center gap-2"
                 aria-label="Book a table"
               >
                 <CalendarCheck size={20} />
                 Book a Table
               </button>
+              <a href="#menu" className="btn-secondary text-sm xs:text-base md:text-lg xl:text-xl px-6 xs:px-8 md:px-10 xl:px-12 py-2.5 xs:py-3 md:py-4 xl:py-5 w-full sm:w-auto inline-block text-center" aria-label="View our food menu">
+                Explore Our Menu
+              </a>
             </motion.div>
 
             {/* Order food for delivery - separate from Book a Table, which uses our own booking system */}

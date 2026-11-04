@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CalendarCheck, Loader2, PartyPopper, X } from 'lucide-react';
+import { CalendarCheck, Camera, Loader2, PartyPopper, X } from 'lucide-react';
 import { useBookingModal } from '../hooks/useBookingModal';
 import { createBooking } from '../lib/bookingApi';
 import type { BookingRecord } from '../types/booking';
@@ -265,9 +265,18 @@ const BookingModal = () => {
                   <div className="flex justify-between gap-4">
                     <span className="text-gray-400">Status</span>
                     <span className="text-brand-gold font-semibold text-right">
-                      {confirmedBooking.status}
+                      Confirmed
                     </span>
                   </div>
+                </div>
+
+                <div className="flex items-start gap-3 text-left bg-brand-gold/10 border border-brand-gold/30 rounded-xl p-4 mb-6">
+                  <Camera className="text-brand-gold flex-shrink-0 mt-0.5" size={20} />
+                  <p className="text-sm text-gray-200">
+                    <span className="font-semibold text-brand-gold">Take a screenshot of this page</span>{' '}
+                    and show it at the restaurant to avail <span className="font-semibold text-brand-gold">20% OFF</span> on
+                    your Authentic Naati Style Biriyani!
+                  </p>
                 </div>
 
                 <p className="text-gray-300 italic mb-6">

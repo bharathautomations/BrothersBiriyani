@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Utensils } from 'lucide-react';
+import { CalendarCheck, Utensils } from 'lucide-react';
+import { useBookingModal } from '../hooks/useBookingModal';
 
 const FinalCTA = () => {
+  const { openBookingModal } = useBookingModal();
+
   return (
     <section className="relative py-16 xs:py-20 sm:py-24 md:py-28 lg:py-32 xl:py-40 overflow-hidden">
       {/* Dark Background */}
@@ -113,19 +116,20 @@ const FinalCTA = () => {
             transition={{ delay: 0.6, duration: 0.6 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 xs:gap-5 sm:gap-6"
           >
-            {/* Primary Button - Order Now */}
+            {/* Primary Button - Book a Table */}
             <motion.button
+              onClick={openBookingModal}
               whileHover={{ scale: 1.05, y: -3 }}
               whileTap={{ scale: 0.95 }}
               className="group relative overflow-hidden bg-gradient-to-r from-brand-gold via-brand-orange to-brand-red text-brand-charcoal-dark px-8 xs:px-10 py-4 xs:py-5 rounded-full text-lg xs:text-xl font-bold shadow-2xl min-w-[200px] xs:min-w-[240px] w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 focus:ring-offset-brand-charcoal-dark"
-              aria-label="Order biriyani online now"
+              aria-label="Book a table"
             >
               <motion.div
                 className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity"
                 whileHover={{ opacity: 0.2 }}
               />
               <span className="relative flex items-center justify-center space-x-3">
-                <span>Order Now</span>
+                <span>Book a Table</span>
                 <motion.div
                   animate={{ x: [0, 5, 0] }}
                   transition={{
@@ -134,7 +138,7 @@ const FinalCTA = () => {
                     ease: "easeInOut",
                   }}
                 >
-                  <ArrowRight className="w-6 h-6" aria-hidden="true" />
+                  <CalendarCheck className="w-6 h-6" aria-hidden="true" />
                 </motion.div>
               </span>
               

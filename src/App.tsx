@@ -2,6 +2,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import BrandHighlights from './components/BrandHighlights';
 import MenuSection from './components/MenuSection';
+import TableBookingOffer from './components/TableBookingOffer';
 import SpecialOfferBanner from './components/SpecialOfferBanner';
 import AboutSection from './components/AboutSection';
 import WhyChooseUs from './components/WhyChooseUs';
@@ -27,6 +28,7 @@ function App() {
           <Hero />
           <BrandHighlights />
           <MenuSection />
+          <TableBookingOffer />
           <SpecialOfferBanner />
           <AboutSection />
           <WhyChooseUs />

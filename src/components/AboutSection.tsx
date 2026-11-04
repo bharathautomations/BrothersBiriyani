@@ -3,9 +3,9 @@ import { Users, Heart, Award, Clock } from 'lucide-react';
 
 const AboutSection = () => {
   const stats = [
-    { icon: Users, value: '50K+', label: 'Happy Customers' },
-    { icon: Heart, value: '100+', label: 'Dishes Served Daily' },
-    { icon: Award, value: '15+', label: 'Years Experience' },
+    { icon: Users, value: '250K+', label: 'Happy Customers' },
+    { icon: Heart, value: '200+', label: 'Dishes Served Daily' },
+    { icon: Award, value: '5+', label: 'Years of Passion' },
     { icon: Clock, value: '30min', label: 'Average Delivery' },
   ];
 
@@ -50,9 +50,9 @@ const AboutSection = () => {
               className="absolute -bottom-4 -right-4 xs:-bottom-6 xs:-right-6 bg-gradient-to-r from-brand-gold to-brand-orange rounded-2xl p-4 xs:p-5 sm:p-6 shadow-2xl"
             >
               <div className="text-center">
-                <div className="text-2xl xs:text-3xl sm:text-4xl font-bold text-brand-charcoal-dark">15+</div>
+                <div className="text-2xl xs:text-3xl sm:text-4xl font-bold text-brand-charcoal-dark">5+</div>
                 <div className="text-xs xs:text-sm font-semibold text-brand-charcoal">
-                  Years of Excellence
+                  Years of Passion
                 </div>
               </div>
             </motion.div>
@@ -69,21 +69,19 @@ const AboutSection = () => {
               <span className="text-brand-gold font-semibold text-xs xs:text-sm sm:text-base">ABOUT US</span>
             </div>
             <h2 className="text-3xl xs:text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-bold font-display mb-4 xs:mb-5 sm:mb-6">
-              A Legacy of <span className="text-brand-gold">Flavor</span> and{' '}
-              <span className="text-brand-red">Tradition</span>
+              Two Brothers, <span className="text-brand-gold">One Dream</span>
             </h2>
             <p className="text-gray-300 text-base xs:text-lg sm:text-xl mb-4 xs:mb-5 sm:mb-6 leading-relaxed">
-              For over 15 years, Brothers Biriyani has been serving authentic
-              Naati Style Bucket Biriyani that captures the essence of traditional Indian
-              cuisine. Our secret? Premium ingredients, time-honored recipes, and a
-              passion for perfection passed down through generations.
+              Brothers Biriyani began in 2021 as the dream of two brothers, Sagar Raj and Akash
+              Raj, who opened their very first outlet in Girinagar, Bengaluru. The belief was
+              simple: serve delicious biriyani with great quality, generous portions and a taste
+              people would remember - at a price that felt fair.
             </p>
             <p className="text-gray-400 mb-8 leading-relaxed">
-              Every grain of rice is carefully selected, every spice is
-              hand-blended, and every dish is prepared with the same love and care
-              we'd serve our own family. We believe food is more than just
-              sustenance—it's an experience, a celebration, and a way to bring
-              people together.
+              That small idea has since grown into three branches across Bengaluru - Girinagar,
+              RR Nagar and Kudlu Gate - plus online delivery, all serving the same biriyani,
+              kebabs, chicken and mutton specials our customers have loved from day one. It's the
+              story of two brothers, one dream and a lot of hard work.
             </p>
 
             {/* Stats Grid */}
