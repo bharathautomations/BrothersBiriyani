@@ -11,7 +11,7 @@ A modern, responsive restaurant landing page built with React, TypeScript, Vite,
 - **Framer Motion** - Animations
 - **Lucide React** - Icons
 - **Netlify Functions** - Serverless backend for table bookings and the admin dashboard
-- **PostgreSQL (Netlify DB / Neon)** - Booking storage, via `@neondatabase/serverless`
+- **PostgreSQL (Supabase)** - Booking storage, via `postgres` (postgres.js)
 - **bcryptjs + jsonwebtoken** - Admin password hashing and session cookies (server-side only)
 
 ## 🚀 Local Development
@@ -19,7 +19,7 @@ A modern, responsive restaurant landing page built with React, TypeScript, Vite,
 ### Prerequisites
 
 - Node.js 18+
-- A PostgreSQL database (Netlify DB, Neon, or any Postgres instance)
+- A Supabase project (free tier works)
 - [Netlify CLI](https://docs.netlify.com/cli/get-started/) (`npm install -g netlify-cli`) to run the site together with the serverless functions locally
 
 ### Install dependencies
@@ -38,21 +38,21 @@ cp .env.example .env
 ```
 
 ```
-NETLIFY_DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
+DATABASE_URL=postgresql://postgres.[PROJECT-REF]:[YOUR-PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres
 ```
 
 `.env` is git-ignored and must never be committed. See [Environment Variables](#-environment-variables) below for the full list.
 
 ### Run the database migration
 
-Apply the schema to your Postgres/Neon database:
+Apply the schema to your Supabase database:
 
 ```bash
-psql "$NETLIFY_DATABASE_URL" -f db/migrations/001_create_bookings.sql
-psql "$NETLIFY_DATABASE_URL" -f db/migrations/002_add_whatsapp_tracking.sql
+psql "$DATABASE_URL" -f db/migrations/001_create_bookings.sql
+psql "$DATABASE_URL" -f db/migrations/002_add_whatsapp_tracking.sql
 ```
 
-(Or run each SQL file's contents through your database provider's SQL editor / `netlify db` tooling, in order.)
+(Or paste each SQL file's contents into the Supabase SQL Editor, in order.)
 
 ### Start the dev server (with functions)
 
@@ -83,19 +83,16 @@ Runs `oxlint` across the project.
 1. Push the repository to GitHub (or your Git provider of choice).
 2. Create a new Netlify site from the repository. Netlify auto-detects the build command (`npm run build`) and publish directory (`dist`) from `netlify.toml`.
 3. In the Netlify site dashboard, go to **Site configuration → Environment variables** and add:
-   - `NETLIFY_DATABASE_URL` (or `DATABASE_URL`) - your Postgres/Neon connection string.
+   - `DATABASE_URL` - your Supabase transaction pooler connection string (port 6543).
    - Never put this value in `netlify.toml`, frontend source code, or commit it to Git.
-4. Run the database migration (`db/migrations/001_create_bookings.sql`) against your production database before (or immediately after) the first deploy.
+4. Run the database migrations (`db/migrations/*.sql`) against your Supabase database before (or immediately after) the first deploy.
 5. Deploy. Netlify will build the site and automatically bundle everything in `netlify/functions` as serverless functions, reachable through the `/api/*` redirect defined in `netlify.toml`.
-
-If you're using Netlify DB (the built-in Neon integration), running `netlify db init` provisions the database and injects `NETLIFY_DATABASE_URL` into your site's environment automatically, both locally and in production.
 
 ## 🔐 Environment Variables
 
 | Variable | Required | Description |
 |---|---|---|
-| `NETLIFY_DATABASE_URL` | Yes (or `DATABASE_URL`) | PostgreSQL connection string used only by Netlify Functions, never exposed to the frontend. |
-| `DATABASE_URL` | Alternative | Used if `NETLIFY_DATABASE_URL` is not set - useful for a self-managed Postgres/Neon instance. |
+| `DATABASE_URL` | Yes | Supabase PostgreSQL connection string (transaction pooler, port 6543) used only by Netlify Functions, never exposed to the frontend. |
 | `WHATSAPP_ENABLED` | No (default `false`) | Set to `true` to actually call the WhatsApp API. When `false`/unset, bookings work normally and no WhatsApp call is ever made. |
 | `WHATSAPP_ACCESS_TOKEN` | Only if enabled | Meta WhatsApp Business Platform access token. |
 | `WHATSAPP_PHONE_NUMBER_ID` | Only if enabled | The WhatsApp Business phone number ID messages are sent *from*. |

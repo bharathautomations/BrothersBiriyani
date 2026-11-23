@@ -1,4 +1,4 @@
-import type { NeonQueryFunction } from '@neondatabase/serverless';
+import type { SqlClient } from './db';
 
 const MAX_ATTEMPTS_PER_WINDOW = 5;
 
@@ -12,7 +12,7 @@ interface CountRow {
  * an unusually high rate of attempts from one number within the last minute.
  */
 export async function isWithinRateLimit(
-  sql: NeonQueryFunction<false, false>,
+  sql: SqlClient,
   customerPhone: string
 ): Promise<boolean> {
   const rows = (await sql`

@@ -1,4 +1,4 @@
-import type { NeonQueryFunction } from '@neondatabase/serverless';
+import type { SqlClient } from './db';
 
 interface CounterRow {
   last_number: number;
@@ -11,7 +11,7 @@ interface CounterRow {
  * This counter is only used for reference numbering - it does not limit or track seats.
  */
 export async function generateBookingReference(
-  sql: NeonQueryFunction<false, false>,
+  sql: SqlClient,
   bookingDate: string
 ): Promise<string> {
   const rows = (await sql`
