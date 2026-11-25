@@ -139,7 +139,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
       ) VALUES (
         ${bookingReference}, ${customerName}, ${customerPhone}, ${customerEmail},
         ${bookingDate}, ${bookingTime}, ${guestsResult.value}, ${specialRequest},
-        'PENDING', ${idempotencyKey}
+        'CONFIRMED', ${idempotencyKey}
       )
       ON CONFLICT (idempotency_key) DO NOTHING
       RETURNING
