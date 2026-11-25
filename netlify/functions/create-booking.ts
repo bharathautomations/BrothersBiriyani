@@ -4,6 +4,9 @@ import { toBookingResponse } from './utils/mapBooking';
 import { generateBookingReference } from './utils/reference';
 import { isWithinRateLimit } from './utils/rateLimit';
 import type { BookingRow } from './utils/types';
+import { getWhatsAppConfig } from './utils/whatsappConfig';
+import { sendRestaurantBookingNotification } from './utils/whatsapp';
+import { toNotificationStatus } from './utils/whatsappStatus';
 import {
   isPastDate,
   isValidDateString,
@@ -147,12 +150,26 @@ export const handler: Handler = async (event: HandlerEvent) => {
     `) as BookingRow[];
 
     if (inserted.length > 0) {
-      // The restaurant WhatsApp notification is NOT sent here - it would mean every
-      // concurrent booking fires its own simultaneous Meta API call, which exceeds
-      // WhatsApp's per-number throughput limit under any real burst (confirmed via load
-      // testing). The row stays restaurant_whatsapp_status='PENDING' (its DB default) and
-      // is picked up and sent at a safe, throttled pace by send-whatsapp-queue.ts instead.
-      return jsonResponse(201, { success: true, booking: toBookingResponse(inserted[0]) });
+      const booking = toBookingResponse(inserted[0]);
+
+      // Sent once per new booking, right here - no polling job. A failure never fails the
+      // booking; it is stored as FAILED and can be retried from the admin dashboard.
+      if (getWhatsAppConfig().enabled) {
+        try {
+          const result = await sendRestaurantBookingNotification(booking);
+          await sql`
+            UPDATE bookings
+            SET restaurant_whatsapp_status = ${toNotificationStatus(result)},
+                whatsapp_last_error = ${result.error ?? null},
+                whatsapp_sent_at = now()
+            WHERE id = ${inserted[0].id}
+          `;
+        } catch (notifyError) {
+          console.error('create-booking: WhatsApp notification failed', notifyError);
+        }
+      }
+
+      return jsonResponse(201, { success: true, booking });
     }
 
     // A concurrent request with the same idempotency key won the race - return that row.
